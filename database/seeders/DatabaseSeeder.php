@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\BlogPost;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,5 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+        $this->call(UsersTableSeeder::class);
+        $this->call(BlogCategoriesTableSeeder::class);
+        //если хочу создать тест данные - фабрикой ) заранее ее определяю в database/factories
+        //с начала категории потом посты ) так как посты используют категории
+        BlogPost::factory(100)->create();
     }
 }
