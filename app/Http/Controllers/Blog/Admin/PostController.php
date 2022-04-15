@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Blog\Admin;
 
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Http\Requests\BlogCategoryUpdateRequest;
+use App\Http\Requests\BlogPostUpdateRequest;
 use App\Models\BlogCategory;
 use App\Repositories\BlogCategoryRepository;
 use App\Repositories\BlogPostRepository;
 use App\Repositories\CoreRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PostController extends BaseController
@@ -84,9 +86,32 @@ class PostController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(BlogCategoryUpdateRequest $request, $id)
+    public function update(BlogPostUpdateRequest $request, $id)
     {
-        dd(\request()->all() , $id);
+        $item = $this->blogPostRepository->getEdit($id);
+
+        if(empty($item)){
+            return  back()
+                ->withErrors(['msg' => "Запись id=[{$id}] не найдена"])
+                ->withInput();
+        }
+        $data = $request->all();
+        if(empty($data['slug'])){
+            $data['slug'] = \Str::slug($data['title']);
+        }
+        if(empty($item->published_at) && $data['is_published']){
+            $data['published_at'] = Carbon::now();
+        }
+        $result = $item->update($data);
+        if($result){
+            return redirect()
+                ->route('blog.admin.posts.edit' , $item->id)
+                ->with(['success' => 'Успешно сохранено ']);
+        }else{
+            return back()
+                ->withErrors(['msg' => 'Ошибка сохранения'])
+                ->withInput();
+        }
     }
     public function destroy($id){
         dd(\request()->all() , $id);
