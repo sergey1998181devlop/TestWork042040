@@ -11,6 +11,7 @@ class BlogPost extends Model
     use HasFactory;
     use SoftDeletes;//все у которых deleted_at не заполенные ) удаленные не берем
 
+    const UNKNOWN_USER = 1;
     protected $fillable
     = [
         'title',
@@ -20,7 +21,6 @@ class BlogPost extends Model
         'content_row',
         'is_published',
         'published_at',
-        'user_id'
       ];
 
     public function category()

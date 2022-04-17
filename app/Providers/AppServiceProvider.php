@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useBootstrap();
-
+//наделяю модели обсерверами
         BlogPost::observe(BlogPostObserver::class);
         BlogCategory::observe(BlogCategoryObserver::class);
     }

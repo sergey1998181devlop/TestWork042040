@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\BlogCategory;
+use Carbon\Carbon;
 
 class BlogCategoryObserver
 {
@@ -26,6 +27,10 @@ class BlogCategoryObserver
     public function updated(BlogCategory $blogCategory)
     {
         //
+    }
+
+    public function updating(BlogCategory $blogCategory){
+        $this->setSlug($blogCategory);
     }
 
     /**
@@ -59,5 +64,17 @@ class BlogCategoryObserver
     public function forceDeleted(BlogCategory $blogCategory)
     {
         //
+    }
+
+    protected function setPublishedAt(BlogCategory $blogCategory){
+        if(empty($blogCategory->published_at) && $blogCategory->is_published ){
+            $blogCategory->published_at = Carbon::now();
+        }
+    }
+
+    protected function setSlug(BlogCategory $blogCategory){
+        if(empty($blogCategory->slug)){
+            $blogCategory->slug = \Str::slug($blogCategory->title);
+        }
     }
 }

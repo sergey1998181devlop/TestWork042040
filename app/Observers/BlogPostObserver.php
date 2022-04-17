@@ -71,6 +71,23 @@ class BlogPostObserver
         //
     }
 
+    public function creating(BlogPost $blogPost){
+        $this->setPublishedAt($blogPost);
+
+        $this->setSlug($blogPost);
+
+        $this->setHtml($blogPost);
+
+        $this->setUser($blogPost);
+    }
+    public function setUser(BlogPost $blogPost){
+        $blogPost->user_id = auth()->id() ?? BlogPost::UNKNOWN_USER;
+    }
+    public function setHtml(BlogPost $blogPost){
+        if($blogPost->isDirty('content_row')){
+            $blogPost->content_html = $blogPost->content_row;
+        }
+    }
     /**
      * Handle the ModelsBlogPost "created" event.
      *

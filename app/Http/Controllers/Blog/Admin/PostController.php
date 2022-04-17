@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Blog\Admin;
 
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Http\Requests\BlogCategoryUpdateRequest;
+use App\Http\Requests\BlogPostCreateRequest;
 use App\Http\Requests\BlogPostUpdateRequest;
 use App\Models\BlogCategory;
+use App\Models\BlogPost;
 use App\Repositories\BlogCategoryRepository;
 use App\Repositories\BlogPostRepository;
 use App\Repositories\CoreRepository;
@@ -48,18 +50,34 @@ class PostController extends BaseController
      */
     public function create()
     {
-
+        $item = new BlogPost();
+        $categoryList
+            = $this->blogCategoryRepository->getForComboBox();
+        return view('blog.admin.posts.edit' ,
+            compact('item' , 'categoryList')
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  BlogPostCreateRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(BlogCategoryCreateRequest $request)
+    public function store(BlogPostCreateRequest $request)
     {
+        $data = $request->input();
+        $item = (new BlogPost())->create($data);
 
+        if($item){
+            return  redirect()->route('blog.admin.posts.edit' , [$item->id])
+                ->with(['success' => 'Успешно сохранено']);
+        }else{
+            return back()->withErrors(['msg' => 'Ошибка сохранения'])
+                ->withInput();
+        }
+//
+//        return view('blog.admin.posts.edit' , compact('item' , 'ca'))
     }
 
     /**
